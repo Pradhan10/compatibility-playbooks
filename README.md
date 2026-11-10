@@ -1,72 +1,51 @@
 # Compatibility Playbooks
 
-Reusable, tool-neutral AI workflows for reviewing backward compatibility and release risk in enterprise software systems.
+**Portable, evidence-driven AI workflows for reviewing API, event, and database compatibility—and the release risks around them.**
 
-These playbooks are designed to guide an engineer and an AI coding assistant through evidence gathering, impact analysis, and reviewable recommendations. They do not replace contract tests, schema registries, CI checks, operational knowledge, or human approval.
+For staff and platform engineers, architects, tech leads, and SREs working across services, contracts, and production rollouts. Use these Markdown playbooks with GitHub Copilot, OpenAI Codex, Cursor, Claude Code, or another assistant that can inspect the context you provide.
 
-## Who this is for
+They help turn a change into a reviewable account of **what could break, what evidence supports that concern, what remains unknown, and what to verify before release**. They complement contract tests, schema checks, migration tests, operational knowledge, and human decisions; they do not certify safety.
 
-- Engineers changing APIs, event contracts, database schemas, or deployment behavior
-- Staff and platform engineers reviewing cross-service impact
-- Tech leads, architects, SREs, and release owners preparing changes for production
-- Teams using GitHub Copilot, OpenAI Codex, Cursor, Claude Code, or another assistant that can inspect supplied repository context
+## Start here
 
-## Quick start
+1. Pick the workflow for the change: [API](playbooks/api-compatibility.md), [event/message](playbooks/event-compatibility.md), [database/migration](playbooks/database-compatibility.md), [release readiness](playbooks/release-readiness.md), or [root cause analysis](playbooks/root-cause-analysis.md).
+2. Provide the playbook's requested inputs: diff, before/after contract or schema, relevant callers, deployment constraints, and check results.
+3. Ask your assistant to inspect available context and cite paths, symbols, commits, or supplied artifacts for findings.
+4. Verify material claims with deterministic checks and system owners. Keep the resulting review with the PR, incident, or release record.
 
-1. Choose the playbook that matches the change.
-2. Open it in your coding assistant or copy its **Prompt** section into a session.
-3. Supply the requested context: diff, contract/schema versions, relevant callers, deployment constraints, and test results.
-4. Ask the assistant to inspect the repository and cite file paths, symbols, commands, or supplied artifacts for each material finding.
-5. Verify findings with deterministic checks and the responsible system owners before approving or deploying.
+**Example:** Before changing a Kafka payload, provide the schema diff, producer and consumer code, schema-registry policy, and rollout plan. The event workflow asks the assistant to assess old/new producer-consumer combinations, retained-message replay, and unknown external consumers—then return findings with evidence, confidence, and validation actions.
 
-Do not paste secrets, customer data, credentials, or restricted production logs into an assistant unless your organization's policies explicitly allow it.
+> **Data handling:** Do not provide secrets, credentials, customer data, or restricted production logs unless your organization's policy explicitly permits it. Prefer sanitized examples and aggregates.
 
-## Playbooks
+## Workflows
 
-| Playbook | Use it when |
+| Playbook | Use it for |
 |---|---|
-| [API compatibility](playbooks/api-compatibility.md) | Changing REST, RPC, or SDK-facing contracts |
-| [Event compatibility](playbooks/event-compatibility.md) | Changing Kafka, queue, webhook, or other event payloads |
-| [Database compatibility](playbooks/database-compatibility.md) | Changing schemas, data migrations, or application/schema rollout order |
-| [Release readiness](playbooks/release-readiness.md) | Assessing deploy, migration, observability, and rollback readiness |
-| [Root cause analysis](playbooks/root-cause-analysis.md) | Investigating an incident or unexpected behavior with evidence |
+| [API compatibility review](playbooks/api-compatibility.md) | REST, RPC, GraphQL, and SDK-facing contract changes |
+| [Event compatibility review](playbooks/event-compatibility.md) | Kafka, queues, webhooks, CDC, and message payload changes |
+| [Database compatibility review](playbooks/database-compatibility.md) | Schema changes, data migrations, and mixed application/schema versions |
+| [Release readiness review](playbooks/release-readiness.md) | Deployment order, migration, observability, and recovery readiness |
+| [Root cause analysis](playbooks/root-cause-analysis.md) | Incidents and regressions where evidence and competing hypotheses matter |
 
-Each playbook contains a copy-ready prompt, required inputs, an output contract, evidence rules, and a worked example. Examples are fictional and are intended to show the expected reasoning and format.
+See [worked examples](examples/) for fictional enterprise scenarios and sample findings.
 
-## How these playbooks work
+## What makes these useful
 
-The assistant should:
+- **Evidence first:** Findings should cite source artifacts and distinguish observation from inference.
+- **Unknowns stay visible:** Missing information is marked, with a verification path, rather than guessed.
+- **Enterprise transitions:** Workflows consider callers, producers/consumers, mixed versions, migration order, rollback limits, and operations.
+- **Tool-neutral Markdown:** Copy the prompt into your assistant or adapt it to your team's repository instructions.
+- **Practical outputs:** Findings, risk, validation steps, and release conditions are structured for review and follow-up.
 
-- Separate **observed evidence**, **inference**, and **assumption**.
-- Cite the source for each repository-specific claim using paths, symbols, commit references, test output, or supplied artifacts.
-- Mark missing information as **Unknown** and state how to verify it; never fill gaps with plausible-sounding facts.
-- Describe impact in terms of producers, consumers, clients, operators, data, and rollout states where applicable.
-- Recommend concrete validation steps and identify which decisions require human confirmation.
-- Report findings by severity and confidence, without implying that a review proves the system is safe.
+## Scope and limitations
 
-## Suggested use in an enterprise repository
+These are decision-support workflows. Assistants can only reason over context they can access; an undiscovered consumer or undocumented constraint can change the conclusion. A clean prompt review does not replace deterministic contract/schema checks, tests, production telemetry, or accountable human approval. Treat an “all clear” as limited to the evidence inspected.
 
-Run deterministic checks first where available, such as OpenAPI diff tooling, generated-client compilation, schema-registry compatibility checks, migration tests, and contract tests. Use the playbook to investigate context those checks cannot establish, such as actual caller behavior, mixed-version deployment windows, operational constraints, or rollback feasibility.
-
-Keep the review in the change record (for example, a PR or release ticket). Redact sensitive information and follow organizational data-handling policy.
-
-## Limitations
-
-- An assistant only reasons over context it can access. A missing consumer, undocumented integration, or unprovided deployment constraint can invalidate a conclusion.
-- Static compatibility tools and runtime behavior may disagree with documentation; record the discrepancy and ask the relevant owner.
-- Compatibility is contextual. A change can be wire-compatible yet break behavior, operational procedures, generated clients, or data recovery.
-- These prompts are decision support. They do not certify compatibility, replace tests, or authorize production changes.
+The repository focuses on compatibility and adjacent release/incident workflows. It does not provide an automated reviewer, guarantee compatibility, or connect to Jira, GitHub, or production systems.
 
 ## Contributing
 
-Contributions should improve a real review workflow, not merely add role-play instructions. Include:
-
-1. The scenario and intended audience.
-2. Required inputs and the evidence the assistant should inspect.
-3. An example that demonstrates the expected output (use fictional or safely sanitized data).
-4. Known limitations and deterministic checks that should accompany the prompt.
-
-Keep playbooks tool-neutral. Tool-specific installation adapters can be added separately when they preserve the canonical workflow. Never include secrets, customer data, proprietary incident records, or unlicensed source material.
+Focused improvements and realistic, sanitized examples are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md), the [Code of Conduct](CODE_OF_CONDUCT.md), and [Security policy](SECURITY.md). Please do not submit secrets, proprietary incident records, or customer data.
 
 ## License
 
